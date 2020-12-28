@@ -1,9 +1,27 @@
+class StandardOutput():
+
+    def write(self, what):
+        print(what)
+
+
+class TestOutput():
+    def __init__(self):
+        self.log = []
+
+    def write(self, what):
+        self.log.append(what)
+
+
 class VirtualMachine():
 
     def __init__(self):
         self.stack = []
         self.registers = {i: 0 for i in range(32768, 32776)}
         self.memory = {}
+        self.output = None
+
+    def set_output(self, output):
+        self.output = output
 
     def writeInMemory(self, where, what):
         what %= 32768
@@ -35,16 +53,14 @@ class VirtualMachine():
                 return
 
             if opcode == 9: # add
-                a = program[index]
-                b = program[index + 1]
-                c = program[index + 2]
+                self.writeInMemory(
+                    program[index],
+                    self.readFromMemory(program[index + 1]) + self.readFromMemory(program[index + 2]))
 
-                self.writeInMemory(a, self.readFromMemory(b) + self.readFromMemory(c))
                 index += 3
 
             elif opcode == 19: # out a
-                a = program[index]
-                print(self.readFromMemory(a))
+                self.output.write(self.readFromMemory(program[index]))
                 index += 1
 
             elif opcode == 21: # noop
@@ -54,16 +70,22 @@ class VirtualMachine():
                 raise Exception(f'Unknown opcode {opcode}')
 
 
-
-
 example_program = [9, 32768, 32769, 4, 19, 32768]
 
+output = TestOutput()
 vm = VirtualMachine()
+vm.set_output(output)
 vm.execute_program(example_program)
 
 assert vm.registers[32768] == 4
+assert len(output.log) == 1
+assert output.log[0] == 4
 
+output = TestOutput()
 vm = VirtualMachine()
+vm.set_output(output)
 vm.registers[32769] = 100
 vm.execute_program(example_program)
 assert vm.registers[32768] == 104
+assert len(output.log) == 1
+assert output.log[0] == 104
