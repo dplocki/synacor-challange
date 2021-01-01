@@ -1,3 +1,5 @@
-# Synacor Challange
+# Synacor Challenge
 
-Solution for [Synacor Challane](https://challenge.synacor.com/).
+Solution for [Synacor Challenge](https://challenge.synacor.com/).
+
+Language used: **Python**.
