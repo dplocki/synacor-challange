@@ -1,7 +1,7 @@
 class StandardIO():
 
     def write(self, what):
-        print(what)
+        print(what, end='')
 
     def read(self):
         return input()
@@ -175,7 +175,7 @@ class VirtualMachine():
 
             elif opcode == 19:  # out a
                 index, a = get_current_program_value()
-                self.io.write(self.readFromMemory(a))
+                self.io.write(chr(self.readFromMemory(a)))
 
             elif opcode == 20:  # in
                 index, a = get_current_program_value()
@@ -197,7 +197,7 @@ vm.execute_program(example_program)
 
 assert vm.registers[32768] == 4
 assert len(output.log) == 1
-assert output.log[0] == 4
+assert output.log[0] == chr(4)
 
 output = TestIO()
 vm = VirtualMachine()
@@ -206,4 +206,20 @@ vm.registers[32769] = 100
 vm.execute_program(example_program)
 assert vm.registers[32768] == 104
 assert len(output.log) == 1
-assert output.log[0] == 104
+assert output.log[0] == chr(104)
+
+
+def load_program(file_name: str):
+    with open(file_name, mode='rb') as file: # b is important -> binary
+        while True:
+            tmp = file.read(2)
+            if tmp:
+                yield int.from_bytes(tmp, byteorder='little')
+            else:
+                return
+
+
+program = list(load_program('challenge.bin'))
+vm = VirtualMachine()
+vm.set_io(StandardIO())
+vm.execute_program(program)
