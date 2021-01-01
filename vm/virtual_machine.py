@@ -42,7 +42,7 @@ class VirtualMachine():
                 index, a = get_current_program_value()
                 index, b = get_current_program_value()
 
-                self.writeInMemory(a, self.readFromMemory(a))
+                self.writeInMemory(a, b)
 
             elif opcode == 2:  # push:
                 index, a = get_current_program_value()
@@ -131,7 +131,7 @@ class VirtualMachine():
                 index, a = get_current_program_value()
                 index, b = get_current_program_value()
 
-                self.writeInMemory(a, self.readFromMemory(int(not b)))
+                self.writeInMemory(a, ~(self.readFromMemory(b)))
 
             elif opcode == 15:  # rmem
                 index, a = get_current_program_value()
