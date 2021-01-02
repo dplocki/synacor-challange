@@ -166,7 +166,7 @@ class VirtualMachine():
                 index, a = get_next_value()
                 index, b = get_next_value()
 
-                self.write(self.read(a), self.to_number(b))
+                self.write(self.to_number(a), self.to_number(b))
 
             elif opcode == OptCode.CALL:
                 # write the address of the next instruction to the stack and jump to <a>
