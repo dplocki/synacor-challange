@@ -4,7 +4,7 @@ from vm.standard_io import StandardIO
 from vm.debug_virtual_machine import DebugVirtualMachine
 
 
-vm = VirtualMachine(StandardIO)
+vm = VirtualMachine(StandardIO())
 #vm = DebugVirtualMachine()
 
 vm.load_program(load_program('challenge.bin'))
