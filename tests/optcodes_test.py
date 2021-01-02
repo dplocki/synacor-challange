@@ -1,4 +1,5 @@
 import unittest
+
 from vm.virtual_machine import VirtualMachine
 from vm.opt_codes import OptCode
 from vm.memory_io import MemoryIO

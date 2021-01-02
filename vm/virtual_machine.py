@@ -1,4 +1,3 @@
-from vm.debugger import print_debug
 from vm.opt_codes import OptCode
 
 
