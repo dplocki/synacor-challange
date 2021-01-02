@@ -39,7 +39,7 @@ class VirtualMachine():
 
     def run(self):
         index = 0
-        def get_next_value(): return (index + 1, self.memory[index])
+        get_next_value = lambda: (index + 1, self.memory[index])
 
         while True:
             self.on_new_instruction(index)
