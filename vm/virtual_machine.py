@@ -202,7 +202,7 @@ class VirtualMachine():
                 pass
 
             else:
-                raise Exception(f'Unknown opcode {opcode}')
+                raise Exception(f'Unknown opcode {opcode} [index: {index - 1}]')
 
     def load_program(self, program: list):
         for index, instruction in enumerate(program):
