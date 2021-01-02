@@ -160,7 +160,7 @@ class VirtualMachine():
                 index, a = get_next_value()
                 index, b = get_next_value()
 
-                self.write(a, self.read(b))
+                self.write(a, self.read(self.to_number(b)))
 
             elif opcode == OptCode.WMEM:
                 # write the value from <b> into memory at address <a>
@@ -209,10 +209,10 @@ class VirtualMachine():
         for index, instruction in enumerate(program):
             self.memory[index] = instruction
 
-    def on_new_instruction(self, index: int):
+    def on_new_instruction(self, index: int) -> None:
         pass
 
-    def on_program_halt(self):
+    def on_program_halt(self) -> None:
         pass
 
 
