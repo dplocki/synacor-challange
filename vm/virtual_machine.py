@@ -1,4 +1,5 @@
 from vm.debugger import print_debug
+from vm.opt_codes import OptCode
 
 
 class VirtualMachine():
@@ -44,14 +45,13 @@ class VirtualMachine():
         def get_next_value(): return (index + 1, self.memory[index])
 
         while True:
-            #print_debug(index, self.memory)
             index, opcode = get_next_value()
 
-            if opcode == 0:  # halt
+            if opcode == OptCode.HALT:
                 # stop execution and terminate the program
                 return
 
-            elif opcode == 1:  # set
+            elif opcode == OptCode.SET:
                 # set register <a> to the value of <b>
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -59,19 +59,19 @@ class VirtualMachine():
                 assert is_register(a)
                 self.write(a, self.number(b))
 
-            elif opcode == 2:  # push:
+            elif opcode == OptCode.PUSH:
                 # push <a> onto the stack
                 index, a = get_next_value()
 
                 self.stack.append(self.to_number(a))
 
-            elif opcode == 3:  # pop
+            elif opcode == OptCode.POP:
                 # remove the top element from the stack and write it into <a>; empty stack = error
                 index, a = get_next_value()
 
                 self.write(a, self.stack.pop())
 
-            elif opcode == 4:  # eq
+            elif opcode == OptCode.EQ:
                 # set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -79,7 +79,7 @@ class VirtualMachine():
 
                 self.write(a, 1 if self.to_number(b) == self.to_number(c) else 0)
 
-            elif opcode == 5:  # gt
+            elif opcode == OptCode.GT:
                 # set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -87,13 +87,13 @@ class VirtualMachine():
 
                 self.write(a, 1 if self.to_number(b) > self.to_number(c) else 0)
 
-            elif opcode == 6:  # jmp
+            elif opcode == OptCode.JMP:
                 # jump to <a>
                 index, a = get_next_value()
 
                 index = self.to_number(a)
 
-            elif opcode == 7:  # jt
+            elif opcode == OptCode.JT:
                 # if <a> is nonzero, jump to <b>
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -101,7 +101,7 @@ class VirtualMachine():
                 if self.to_number(a) != 0:
                     index = self.to_number(b)
 
-            elif opcode == 8:  # jf
+            elif opcode == OptCode.JF:
                 # if <a> is zero, jump to <b>
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -109,7 +109,7 @@ class VirtualMachine():
                 if self.read(a) == 0:
                     index = self.readFromMemory(b)
 
-            elif opcode == 9:  # add
+            elif opcode == OptCode.ADD:
                 # assign into <a> the sum of <b> and <c> (modulo 32768)
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -117,7 +117,7 @@ class VirtualMachine():
 
                 self.write(a, self.to_number(b) + self.to_number(c))
 
-            elif opcode == 10:  # mult
+            elif opcode == OptCode.MULT:
                 # store into <a> the product of <b> and <c> (modulo 32768)
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -125,7 +125,7 @@ class VirtualMachine():
 
                 self.write(a, self.to_number(b) * self.to_number(c))
 
-            elif opcode == 11:  # mod
+            elif opcode == OptCode.MOD:
                 # store into <a> the remainder of <b> divided by <c>
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -133,7 +133,7 @@ class VirtualMachine():
 
                 self.write(a, self.to_number(b) % self.to_number(c))
 
-            elif opcode == 12:  # and
+            elif opcode == OptCode.AND:
                 # stores into <a> the bitwise and of <b> and <c>
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -141,7 +141,7 @@ class VirtualMachine():
 
                 self.write(a, self.to_number(b) & self.to_number(c))
 
-            elif opcode == 13:  # or
+            elif opcode == OptCode.OR:
                 # stores into <a> the bitwise or of <b> and <c>
                 index, a = get_next_value()
                 index, b = get_next_value()
@@ -149,48 +149,48 @@ class VirtualMachine():
 
                 self.write(a, self.to_number(b) | self.to_number(c))
 
-            elif opcode == 14:  # not
+            elif opcode == OptCode.NOT:
                 # stores 15-bit bitwise inverse of <b> in <a>
                 index, a = get_next_value()
                 index, b = get_next_value()
 
                 self.write(a, ~(self.to_number(b)))
 
-            elif opcode == 15:  # rmem
+            elif opcode == OptCode.RMEM:
                 # read memory at address <b> and write it to <a>
                 index, a = get_next_value()
                 index, b = get_next_value()
 
                 self.write(a, self.read(b))
 
-            elif opcode == 16:  # wmem
+            elif opcode == OptCode.WMEM:
                 # write the value from <b> into memory at address <a>
                 index, a = get_next_value()
                 index, b = get_next_value()
 
                 self.write(self.read(a), self.to_number(b))
 
-            elif opcode == 17:  # call
+            elif opcode == OptCode.CALL:
                 # write the address of the next instruction to the stack and jump to <a>
                 index, a = get_next_value()
 
                 self.stack.append(index)
                 index = self.to_number(a)
 
-            elif opcode == 18:  # call
+            elif opcode == OptCode.RET:
                 # remove the top element from the stack and jump to it; empty stack = halt
                 if not self.stack:
                     return
 
                 index = self.stack.pop()
 
-            elif opcode == 19:  # out a
+            elif opcode == OptCode.OUT:
                 # write the character represented by ascii code <a> to the terminal
                 index, a = get_next_value()
 
                 self.io.write(self.to_number(a))
 
-            elif opcode == 20:  # in
+            elif opcode == OptCode.IN:
                 # read a character from the terminal and write its ascii code to <a>;
                 # it can be assumed that once input starts, it will continue until a newline is encountered;
                 # this means that you can safely read whole lines from the keyboard and trust that they will be fully read
@@ -198,7 +198,7 @@ class VirtualMachine():
 
                 self.writeInMemory(a, self.io.read())
 
-            elif opcode == 21:  # noop
+            elif opcode == OptCode.NOOP:
                 # no operation
                 pass
 

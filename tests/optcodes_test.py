@@ -1,5 +1,6 @@
 import unittest
 from vm.virtual_machine import VirtualMachine
+from vm.opt_codes import OptCode
 from .test_io import TestIO
 
 
@@ -14,16 +15,21 @@ class TestOptCodes(unittest.TestCase):
         provided = int('000000000000011', 2)
         expected = int('111111111111100', 2)
 
-        self.vm.load_program([14, 32769, provided])
+        self.vm.load_program([
+            OptCode.NOT, 32769, provided
+        ])
+
         self.vm.run()
         result = self.vm.registers[32769]
 
         self.assertEqual(result, expected, f'Expected {expected}, but result is {result}')
 
     def test_out(self):
-        self.vm.load_program([19, ord('A')])
+        self.vm.load_program([
+            OptCode.OUT, ord('A')
+        ])
+
         self.vm.run()
+        result = self.io.log
 
-        result = self.io.log[0]
-
-        self.assertEqual(result, 65, f'Excepted letter but result is: {result}')
+        self.assertEqual(result, [65], f'Excepted letter but result is: {result}')
