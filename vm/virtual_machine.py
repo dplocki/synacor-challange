@@ -57,7 +57,7 @@ class VirtualMachine():
                 index, b = get_next_value()
 
                 assert is_register(a)
-                self.write(a, self.number(b))
+                self.write(a, self.to_number(b))
 
             elif opcode == OptCode.PUSH:
                 # push <a> onto the stack
@@ -106,8 +106,8 @@ class VirtualMachine():
                 index, a = get_next_value()
                 index, b = get_next_value()
 
-                if self.read(a) == 0:
-                    index = self.readFromMemory(b)
+                if self.to_number(a) == 0:
+                    index = self.to_number(b)
 
             elif opcode == OptCode.ADD:
                 # assign into <a> the sum of <b> and <c> (modulo 32768)
