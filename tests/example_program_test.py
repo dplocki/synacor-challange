@@ -15,4 +15,4 @@ class TestExampleProgram(unittest.TestCase):
         vm.run()
 
         self.assertEqual(vm.registers[32768], 104)
-        self.assertEqual(output.log, [chr(104)])
+        self.assertEqual(output.log, [104])

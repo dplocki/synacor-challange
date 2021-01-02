@@ -12,6 +12,15 @@ class VirtualMachine():
     def set_io(self, io):
         self.io = io
 
+    def to_number(self, value):
+        if is_register(value):
+            return self.registers[value]
+
+        if value >= 32776:
+            raise Exception(f'Invalid numeric value: {value}')
+
+        return value
+
     def write(self, where, what):
         what %= 32768
 
@@ -22,15 +31,6 @@ class VirtualMachine():
         else:
             raise Exception(f'Unknown address: {where}')
 
-    def to_number(self, value):
-        if is_register(value):
-            return self.registers[value]
-
-        if value >= 32776:
-            raise Exception(f'Invalid numeric value: {value}')
-
-        return value
-
     def read(self, where):
         if 0 <= where <= 32767:
             return self.memory[where]
@@ -38,10 +38,6 @@ class VirtualMachine():
             return self.registers[where]
 
         raise Exception(f'Unknown address: {where}')
-
-    def load_program(self, program: list):
-        for index, instruction in enumerate(program):
-            self.memory[index] = instruction
 
     def run(self):
         index = 0
@@ -208,6 +204,10 @@ class VirtualMachine():
 
             else:
                 raise Exception(f'Unknown opcode {opcode}')
+
+    def load_program(self, program: list):
+        for index, instruction in enumerate(program):
+            self.memory[index] = instruction
 
 
 def is_register(number: int) -> bool:
