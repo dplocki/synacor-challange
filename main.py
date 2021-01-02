@@ -3,7 +3,7 @@ from vm.virtual_machine import VirtualMachine
 from vm.standard_io import StandardIO
 
 
-program = list(load_program('challenge.bin'))
 vm = VirtualMachine()
 vm.set_io(StandardIO())
-vm.execute_program(program)
+vm.load_program(load_program('challenge.bin'))
+vm.run()

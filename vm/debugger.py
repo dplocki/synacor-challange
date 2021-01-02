@@ -47,6 +47,9 @@ def print_param(number: int) -> str:
         return str(number)
 
 
-def print_debug(index: int, program: [int]):
+def print_debug(index: int, program: dict):
     name, parameteres = DECODER[program[index]]
-    print(f'{index:<10}', f'{name:>7}', ' '.join(map(print_param, program[index + 1:index + 1 + parameteres])))
+    print(
+        f'{index:<10}',
+        f'{name:>7}',
+        ' '.join(map(print_param, program[index + 1:index + 1 + parameteres])))

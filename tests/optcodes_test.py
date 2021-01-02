@@ -15,5 +15,6 @@ class TestOptCodes(unittest.TestCase):
 
 def execute_bitwise(paramater):
     vm = VirtualMachine()
-    vm.execute_program([14, 32769, paramater])
+    vm.load_program([14, 32769, paramater])
+    vm.run()
     return vm.registers[32769]

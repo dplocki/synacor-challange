@@ -1,15 +1,18 @@
+from vm.debugger import print_debug
+
+
 class VirtualMachine():
 
     def __init__(self):
         self.stack = []
-        self.registers = {i: 0 for i in range(32768, 32776)}
-        self.memory = {}
+        self.registers = {index: 0 for index in range(32768, 32776)}
+        self.memory = [0] * (2**16 - 1)
         self.io = None
 
     def set_io(self, io):
         self.io = io
 
-    def writeInMemory(self, where, what):
+    def write(self, where, what):
         what %= 32768
 
         if 0 <= where <= 32767:
@@ -19,153 +22,193 @@ class VirtualMachine():
         else:
             raise Exception(f'Unknown address: {where}')
 
-    def readFromMemory(self, where):
+    def to_number(self, value):
+        if is_register(value):
+            return self.registers[value]
+
+        if value >= 32776:
+            raise Exception(f'Invalid numeric value: {value}')
+
+        return value
+
+    def read(self, where):
         if 0 <= where <= 32767:
-            return where
-        elif 32768 <= where <= 32775:
+            return self.memory[where]
+        elif is_register(where):
             return self.registers[where]
-        else:
-            raise Exception(f'Unknown address: {where}')
 
-    def execute_program(self, program: list):
+        raise Exception(f'Unknown address: {where}')
+
+    def load_program(self, program: list):
+        for index, instruction in enumerate(program):
+            self.memory[index] = instruction
+
+    def run(self):
         index = 0
-        program_lenght = len(program)
-        def get_current_program_value(): return (index + 1, program[index])
+        def get_next_value(): return (index + 1, self.memory[index])
 
-        while index < program_lenght:
-            index, opcode = get_current_program_value()
+        while True:
+            #print_debug(index, self.memory)
+            index, opcode = get_next_value()
 
             if opcode == 0:  # halt
+                # stop execution and terminate the program
                 return
 
             elif opcode == 1:  # set
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
+                # set register <a> to the value of <b>
+                index, a = get_next_value()
+                index, b = get_next_value()
 
-                self.writeInMemory(a, b)
+                assert is_register(a)
+                self.write(a, self.number(b))
 
             elif opcode == 2:  # push:
-                index, a = get_current_program_value()
+                # push <a> onto the stack
+                index, a = get_next_value()
 
-                self.stack.append(self.readFromMemory(a))
+                self.stack.append(self.to_number(a))
 
             elif opcode == 3:  # pop
-                index, a = get_current_program_value()
-                self.writeInMemory(a, self.stack.pop())
+                # remove the top element from the stack and write it into <a>; empty stack = error
+                index, a = get_next_value()
+
+                self.write(a, self.stack.pop())
 
             elif opcode == 4:  # eq
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, 1 if self.readFromMemory(
-                    b) == self.readFromMemory(c) else 0)
+                self.write(a, 1 if self.to_number(b) == self.to_number(c) else 0)
 
             elif opcode == 5:  # gt
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, 1 if self.readFromMemory(
-                    b) > self.readFromMemory(c) else 0)
+                self.write(a, 1 if self.to_number(b) > self.to_number(c) else 0)
 
             elif opcode == 6:  # jmp
-                index, a = get_current_program_value()
-                index = self.readFromMemory(a)
+                # jump to <a>
+                index, a = get_next_value()
+
+                index = self.to_number(a)
 
             elif opcode == 7:  # jt
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
+                # if <a> is nonzero, jump to <b>
+                index, a = get_next_value()
+                index, b = get_next_value()
 
-                if self.readFromMemory(a) != 0:
-                    index = self.readFromMemory(b)
+                if self.to_number(a) != 0:
+                    index = self.to_number(b)
 
             elif opcode == 8:  # jf
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
+                # if <a> is zero, jump to <b>
+                index, a = get_next_value()
+                index, b = get_next_value()
 
-                if self.readFromMemory(a) == 0:
+                if self.read(a) == 0:
                     index = self.readFromMemory(b)
 
             elif opcode == 9:  # add
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # assign into <a> the sum of <b> and <c> (modulo 32768)
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(
-                    b) + self.readFromMemory(c))
+                self.write(a, self.to_number(b) + self.to_number(c))
 
             elif opcode == 10:  # mult
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # store into <a> the product of <b> and <c> (modulo 32768)
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(b)
-                                   * self.readFromMemory(c))
+                self.write(a, self.to_number(b) * self.to_number(c))
 
             elif opcode == 11:  # mod
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # store into <a> the remainder of <b> divided by <c>
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(b) %
-                                   self.readFromMemory(c))
+                self.write(a, self.to_number(b) % self.to_number(c))
 
             elif opcode == 12:  # and
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # stores into <a> the bitwise and of <b> and <c>
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(b)
-                                   & self.readFromMemory(c))
+                self.write(a, self.to_number(b) & self.to_number(c))
 
             elif opcode == 13:  # or
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
-                index, c = get_current_program_value()
+                # stores into <a> the bitwise or of <b> and <c>
+                index, a = get_next_value()
+                index, b = get_next_value()
+                index, c = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(b)
-                                   | self.readFromMemory(c))
+                self.write(a, self.to_number(b) | self.to_number(c))
 
             elif opcode == 14:  # not
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
+                # stores 15-bit bitwise inverse of <b> in <a>
+                index, a = get_next_value()
+                index, b = get_next_value()
 
-                self.writeInMemory(a, ~(self.readFromMemory(b)))
+                self.write(a, ~(self.to_number(b)))
 
             elif opcode == 15:  # rmem
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
+                # read memory at address <b> and write it to <a>
+                index, a = get_next_value()
+                index, b = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(b))
+                self.write(a, self.read(b))
 
             elif opcode == 16:  # wmem
-                index, a = get_current_program_value()
-                index, b = get_current_program_value()
+                # write the value from <b> into memory at address <a>
+                index, a = get_next_value()
+                index, b = get_next_value()
 
-                self.writeInMemory(a, self.readFromMemory(b))
+                self.write(self.read(a), self.to_number(b))
 
             elif opcode == 17:  # call
-                index, a = get_current_program_value()
+                # write the address of the next instruction to the stack and jump to <a>
+                index, a = get_next_value()
+
                 self.stack.append(index)
-                index = self.readFromMemory(a)
+                index = self.to_number(a)
 
             elif opcode == 18:  # call
+                # remove the top element from the stack and jump to it; empty stack = halt
                 if not self.stack:
                     return
 
                 index = self.stack.pop()
 
             elif opcode == 19:  # out a
-                index, a = get_current_program_value()
-                self.io.write(chr(self.readFromMemory(a)))
+                # write the character represented by ascii code <a> to the terminal
+                index, a = get_next_value()
+
+                self.io.write(self.read(a))
 
             elif opcode == 20:  # in
-                index, a = get_current_program_value()
+                # read a character from the terminal and write its ascii code to <a>;
+                # it can be assumed that once input starts, it will continue until a newline is encountered;
+                # this means that you can safely read whole lines from the keyboard and trust that they will be fully read
+                index, a = get_next_value()
+
                 self.writeInMemory(a, self.io.read())
 
             elif opcode == 21:  # noop
+                # no operation
                 pass
 
             else:
                 raise Exception(f'Unknown opcode {opcode}')
+
+
+def is_register(number: int) -> bool:
+    return 32768 <= number <= 32775

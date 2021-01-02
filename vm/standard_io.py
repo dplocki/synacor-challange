@@ -1,7 +1,7 @@
 class StandardIO():
 
     def write(self, what):
-        print(what, end='')
+        print(chr(what), end='')
 
     def read(self):
         return input()
