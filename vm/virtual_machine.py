@@ -196,7 +196,7 @@ class VirtualMachine():
                 # this means that you can safely read whole lines from the keyboard and trust that they will be fully read
                 index, a = get_next_value()
 
-                self.writeInMemory(a, self.io.read())
+                self.write(a, self.io.read())
 
             elif opcode == OptCode.NOOP:
                 # no operation
