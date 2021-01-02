@@ -1,15 +1,14 @@
 import unittest
 from vm.virtual_machine import VirtualMachine
 from vm.opt_codes import OptCode
-from .test_io import TestIO
+from vm.memory_io import MemoryIO
 
 
 class TestOptCodes(unittest.TestCase):
 
     def setUp(self):
-        self.vm = VirtualMachine()
-        self.io = TestIO()
-        self.vm.set_io(self.io)
+        self.io = MemoryIO()
+        self.vm = VirtualMachine(self.io)
 
     def test_bitwise(self):
         provided = int('000000000000011', 2)

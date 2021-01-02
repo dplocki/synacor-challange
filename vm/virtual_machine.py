@@ -4,13 +4,10 @@ from vm.opt_codes import OptCode
 
 class VirtualMachine():
 
-    def __init__(self):
+    def __init__(self, io):
         self.stack = []
         self.registers = {index: 0 for index in range(32768, 32776)}
         self.memory = [0] * (2**16 - 1)
-        self.io = None
-
-    def set_io(self, io):
         self.io = io
 
     def to_number(self, value):
@@ -45,10 +42,12 @@ class VirtualMachine():
         def get_next_value(): return (index + 1, self.memory[index])
 
         while True:
+            self.on_new_instruction(index)
             index, opcode = get_next_value()
 
             if opcode == OptCode.HALT:
                 # stop execution and terminate the program
+                self.on_program_halt()
                 return
 
             elif opcode == OptCode.SET:
@@ -180,6 +179,7 @@ class VirtualMachine():
             elif opcode == OptCode.RET:
                 # remove the top element from the stack and jump to it; empty stack = halt
                 if not self.stack:
+                    self.on_program_halt()
                     return
 
                 index = self.stack.pop()
@@ -208,6 +208,12 @@ class VirtualMachine():
     def load_program(self, program: list):
         for index, instruction in enumerate(program):
             self.memory[index] = instruction
+
+    def on_new_instruction(self, index: int):
+        pass
+
+    def on_program_halt(self):
+        pass
 
 
 def is_register(number: int) -> bool:

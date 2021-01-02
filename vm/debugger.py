@@ -1,4 +1,4 @@
-DECODER = {
+OPTCODES_WITH_PARAMETERS = {
     0: ('halt', 0),
     1: ('set', 2),
     2: ('push', 1),
@@ -24,32 +24,20 @@ DECODER = {
 }
 
 
-def list_program(program):
-    params = 0
-    for instruction in program:
-        if params == 0:
-            print()
-            name, params = DECODER[instruction]
-            print(name, ' ', end='')
-        else:
-            if instruction >= 32768:
-                print(f'register{instruction - 32768}', ' ', end='')
-            else:
-                print(instruction, ' ', end='')
-
-            params -= 1
-
-
-def print_param(number: int) -> str:
+def read_param(number: int) -> str:
     if number >= 32768:
-        return 'register' + str(number - 32768)
+        return 'register_' + str(number - 32768)
     else:
         return str(number)
 
 
+def format_parameter(number: int):
+    return f'{number:<12}'
+
+
 def print_debug(index: int, program: dict):
-    name, parameteres = DECODER[program[index]]
+    name, parameteres = OPTCODES_WITH_PARAMETERS[program[index]]
     print(
-        f'{index:<10}',
-        f'{name:>7}',
-        ' '.join(map(print_param, program[index + 1:index + 1 + parameteres])))
+        f'{index:<10} ',
+        f'{name:>7} ',
+        '  '.join(map(format_parameter, map(read_param, program[index + 1:index + 1 + parameteres]))))
