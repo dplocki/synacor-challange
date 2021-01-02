@@ -188,7 +188,7 @@ class VirtualMachine():
                 # write the character represented by ascii code <a> to the terminal
                 index, a = get_next_value()
 
-                self.io.write(self.read(a))
+                self.io.write(self.to_number(a))
 
             elif opcode == 20:  # in
                 # read a character from the terminal and write its ascii code to <a>;

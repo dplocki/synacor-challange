@@ -1,20 +1,29 @@
 import unittest
 from vm.virtual_machine import VirtualMachine
+from .test_io import TestIO
 
 
 class TestOptCodes(unittest.TestCase):
+
+    def setUp(self):
+        self.vm = VirtualMachine()
+        self.io = TestIO()
+        self.vm.set_io(self.io)
 
     def test_bitwise(self):
         provided = int('000000000000011', 2)
         expected = int('111111111111100', 2)
 
-        result = execute_bitwise(provided)
+        self.vm.load_program([14, 32769, provided])
+        self.vm.run()
+        result = self.vm.registers[32769]
 
         self.assertEqual(result, expected, f'Expected {expected}, but result is {result}')
 
+    def test_out(self):
+        self.vm.load_program([19, ord('A')])
+        self.vm.run()
 
-def execute_bitwise(paramater):
-    vm = VirtualMachine()
-    vm.load_program([14, 32769, paramater])
-    vm.run()
-    return vm.registers[32769]
+        result = self.io.log[0]
+
+        self.assertEqual(result, 65, f'Excepted letter but result is: {result}')
