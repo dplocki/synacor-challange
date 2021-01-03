@@ -21,7 +21,9 @@ if LOAD_DUMP_FLAG in args:
         vm.registers = dump['registers']
         vm.stack = dump['stack']
         vm.load_memory(dump['memory'])
-        vm.run(index=dump['index'])
+        vm.index = dump['index']
+
+        vm.run()
 else:
     vm.load_memory(load_program('challenge.bin'))
     vm.run()

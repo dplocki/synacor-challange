@@ -44,13 +44,13 @@ class DebugVirtualMachine(VirtualMachine):
     def __init__(self):
         VirtualMachine.__init__(self, MemoryIO())
 
-    def on_new_instruction(self, index: int) -> None:
-        name, parameteres = OPTCODES_WITH_PARAMETERS[self.memory[index]]
+    def on_new_instruction(self) -> None:
+        name, parameteres = OPTCODES_WITH_PARAMETERS[self.memory[self.index]]
 
         print(
-            f'{index:<10} ',
+            f'{self.index:<10} ',
             f'{name:>7} ',
-            f'{" ".join(map(format_parameter, map(read_param, self.memory[index + 1:index + 1 + parameteres]))):<40}',
+            f'{" ".join(map(format_parameter, map(read_param, self.memory[self.index + 1:self.index + 1 + parameteres]))):<40}',
             '|',
             f'{self.registers[32768]:7}',
             f'{self.registers[32769]:7}',
