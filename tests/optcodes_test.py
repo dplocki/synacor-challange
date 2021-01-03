@@ -15,7 +15,7 @@ class TestOptCodes(unittest.TestCase):
         provided = int('000000000000011', 2)
         expected = int('111111111111100', 2)
 
-        self.vm.load_program([
+        self.vm.load_memory([
             OptCode.NOT, 32769, provided
         ])
 
@@ -25,7 +25,7 @@ class TestOptCodes(unittest.TestCase):
         self.assertEqual(result, expected, f'Expected {expected}, but result is {result}')
 
     def test_out(self):
-        self.vm.load_program([
+        self.vm.load_memory([
             OptCode.OUT, ord('A')
         ])
 

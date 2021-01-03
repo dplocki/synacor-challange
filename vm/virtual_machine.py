@@ -36,9 +36,8 @@ class VirtualMachine():
 
         raise Exception(f'Unknown address: {where}')
 
-    def run(self):
-        index = 0
-        get_next_value = lambda: (index + 1, self.memory[index])
+    def run(self, index: int = 0):
+        def get_next_value(): return (index + 1, self.memory[index])
 
         while True:
             self.on_new_instruction(index)
@@ -204,9 +203,17 @@ class VirtualMachine():
             else:
                 raise Exception(f'Unknown opcode {opcode} [index: {index - 1}]')
 
-    def load_program(self, program: list):
-        for index, instruction in enumerate(program):
+    def load_memory(self, memory: list) -> None:
+        for index, instruction in enumerate(memory):
             self.memory[index] = instruction
+
+    def save_dump(self, file_name: str, index: int = 0) -> None:
+        with open(file_name, 'wt') as file:
+            file.write(repr({
+                'index': index,
+                'memory': self.memory,
+                'registers': self.registers
+            }))
 
     def on_new_instruction(self, index: int) -> None:
         pass

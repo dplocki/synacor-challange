@@ -10,7 +10,7 @@ class TestExampleProgram(unittest.TestCase):
         output = MemoryIO()
         vm = VirtualMachine(output)
         vm.registers[32769] = 100
-        vm.load_program([9, 32768, 32769, 4, 19, 32768])
+        vm.load_memory([9, 32768, 32769, 4, 19, 32768])
         vm.run()
 
         self.assertEqual(vm.registers[32768], 104)

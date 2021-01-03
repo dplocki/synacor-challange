@@ -7,5 +7,5 @@ from vm.debug_virtual_machine import DebugVirtualMachine
 
 
 vm = DebugVirtualMachine() if len(sys.argv) > 1 and sys.argv[1] == '-d' else VirtualMachine(StandardIO())
-vm.load_program(load_program('challenge.bin'))
+vm.load_memory(load_program('challenge.bin'))
 vm.run()
