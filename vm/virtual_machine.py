@@ -212,7 +212,8 @@ class VirtualMachine():
             file.write(repr({
                 'index': index,
                 'memory': self.memory,
-                'registers': self.registers
+                'registers': self.registers,
+                'stack': self.stack
             }))
 
     def on_new_instruction(self, index: int) -> None:
