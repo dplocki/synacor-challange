@@ -18,12 +18,11 @@ if LOAD_DUMP_FLAG in args:
     with open(dump_file_name, 'rt') as dump_file:
         dump = ast.literal_eval(dump_file.read())
 
-        vm.registers = dump['registers']
-        vm.stack = dump['stack']
-        vm.load_memory(dump['memory'])
-        vm.index = dump['index']
-
-        vm.run()
+    vm.registers = dump['registers']
+    vm.stack = dump['stack']
+    vm.load_memory(dump['memory'])
+    vm.index = dump['index']
 else:
     vm.load_memory(load_program('challenge.bin'))
-    vm.run()
+
+vm.run()
