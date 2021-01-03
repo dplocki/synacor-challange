@@ -35,7 +35,7 @@ your progress.  Good luck!
   If a jump was performed, the next operation is instead the exact destination of the jump.
 - Encountering a register as an operation argument should be taken as reading from the register or setting into the register as appropriate.
 
-## Optcodes
+### Optcodes
 
 | Name | Code | Parameters | Notes |
 |------|------|------------|-------|
@@ -61,3 +61,22 @@ your progress.  Good luck!
 | out | 19 | a | write the character represented by ascii code `a` to the terminal |
 | in | 20 | a | read a character from the terminal and write its ascii code to `a`; it can be assumed that once input starts, it will continue until a newline is encountered; this means that you can safely read whole lines from the keyboard and trust that they will be fully read |
 | noop | 21 |  | no operation |
+
+## Running
+
+Run Virtual Machine by command:
+
+```bash
+python main.py
+```
+
+### Parameters
+
+- `-l`: load dump file (excepte file name after `-l` option)
+- `-d`: display debug information during running program
+
+Example:
+
+```bash
+python main.py -l save.dump -d
+```
