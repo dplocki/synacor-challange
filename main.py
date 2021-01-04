@@ -1,7 +1,6 @@
-import sys
-import ast
+from sys import argv
 
-from vm.utils import load_program
+from vm.utils import load_program, load_dump_file
 from vm.virtual_machine import VirtualMachine
 from vm.standard_io import StandardIO
 from vm.debug_virtual_machine import DebugVirtualMachine
@@ -10,13 +9,11 @@ DEBUG_FLAG = '-d'
 LOAD_DUMP_FLAG = '-l'
 
 
-args = sys.argv[1:] if len(sys.argv) > 1 else []
-vm = DebugVirtualMachine() if DEBUG_FLAG in args else VirtualMachine(StandardIO())
+vm = DebugVirtualMachine() if DEBUG_FLAG in argv else VirtualMachine(StandardIO())
 
-if LOAD_DUMP_FLAG in args:
-    dump_file_name = args[args.index(LOAD_DUMP_FLAG) + 1]
-    with open(dump_file_name, 'rt') as dump_file:
-        dump = ast.literal_eval(dump_file.read())
+if LOAD_DUMP_FLAG in argv:
+    dump_file_name = argv[argv.index(LOAD_DUMP_FLAG) + 1]
+    dump = load_dump_file(dump_file_name)
 
     vm.registers = dump['registers']
     vm.stack = dump['stack']
