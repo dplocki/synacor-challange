@@ -23,11 +23,10 @@ else:
     dump_file_name = args[args.index(LOAD_DUMP_FLAG) + 1]
     dump = load_dump_file(dump_file_name)
 
-    decompiled_program = read_program(dump['memory'])
-
+    decompiled_program = list(read_program(dump['memory']))
     call_indexes = set(paramaters[0] for _, name, paramaters in decompiled_program if name == 'call')
 
-    for index, name, paramaters in read_program(dump['memory']):
+    for index, name, paramaters in decompiled_program:
         print('*' if index in call_indexes else ' ', end='')
         print(f'{index:>7}: ', end='')
         if name:
