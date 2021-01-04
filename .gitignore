@@ -7,3 +7,5 @@
 # Synacor files
 arch-spec
 challenge.bin
+codes.txt
+*.dump
