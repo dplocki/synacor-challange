@@ -18,7 +18,10 @@ LOAD_DUMP_FLAG = '-l'
 
 args = argv[1:] if len(argv) > 1 else []
 if LOAD_DUMP_FLAG not in args:
-    print('Please provide the dump file to read from')
+    print()
+    print('\t', 'Please provide the dump file to read from:')
+    print('\t', argv[0], LOAD_DUMP_FLAG, '<file name>')
+    print()
 else:
     dump_file_name = args[args.index(LOAD_DUMP_FLAG) + 1]
     dump = load_dump_file(dump_file_name)
