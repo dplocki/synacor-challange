@@ -30,7 +30,7 @@ From the [previous puzzle](./check_code.ipynb) I know, that function on line `60
     5544:    push  register_2
 ```
 
-The easiest will be simply to remove memory cell `5489` and the following `5490`: the optcode and its the only paramater. Removing by replace them by `nope` operation.
+The easiest will be simply to remove memory cell `5489` and the following `5490`: the optcode and its the only paramater. Removing by replace them by `nope` operation (optcode: `21`).
 
 Also, after the invoke of the function `6027` program is checking the call result:
 
@@ -47,15 +47,16 @@ if register_1 != 6:
     goto :5579
 ```
 
-Because we have removed the call to the check function, we have replace optcode `jf` with `jt`.
+Because we have removed the call to the check function, we have replace optcode `jf` (the optcode `8`) with `jt` (the optcode `7`).
 
-The final code which I have added into [../main.py], just after loading the invoking `load_dump_file`.
+The final code which I have added into [virual machine start](../main.py) program, just after loading the invoking `load_dump_file`.
 
 ```py
     # Set register 7
-    registers[32775] = 25734
+    #  here placed the value found which should be in register_7
+    registers[32775] = 0
 
-    # removing call checking function
+    # Removing call checking function
     #  5489:    call  6027
     memory[5489] = 21
     memory[5490] = 21
