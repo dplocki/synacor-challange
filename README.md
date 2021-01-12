@@ -1,5 +1,8 @@
 # Synacor Challenge
 
+![GitHub](https://img.shields.io/github/license/dplocki/synacor-challange)
+![Lines of code](https://img.shields.io/tokei/lines/github/dplocki/synacor-challenge)
+
 Solution for [Synacor Challenge](https://challenge.synacor.com/).
 
 Language used: **Python**.
