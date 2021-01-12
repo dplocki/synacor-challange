@@ -87,7 +87,7 @@ python main.py -l save.dump -d
 
 After running the virtual machine, we can play in the text advature hidden in the given program. In the game we can find another puzzles:
 
-- [A puzzle for open the door](./puzzles/door_puzzles.ipynb)
+- [A puzzle for open the door](./puzzles/door_puzzle.ipynb)
 - [A puzzle breaking the teleporter check function](./puzzles/check_code.ipynb)
 - [A puzzle with bypassing the check function invoking](./puzzles/bypassing_the_check.md)
 - [A puzzle with opening the vault lock](./puzzles/vault_lock.ipynb)
