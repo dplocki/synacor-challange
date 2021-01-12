@@ -4,14 +4,16 @@ Solution for [Synacor Challenge](https://challenge.synacor.com/).
 
 Language used: **Python**.
 
-## Task
+## Tasks
+
+### Virtual machine
 
 In this challenge, your job is to use this architecture spec to create a
 virtual machine capable of running the included binary.  Along the way,
 you will find codes; submit these to the challenge website to track
 your progress.  Good luck!
 
-### Architecture
+#### Architecture
 
 - three storage regions
   - memory with 15-bit address space storing 16-bit values
@@ -20,7 +22,7 @@ your progress.  Good luck!
 - all numbers are unsigned integers 0..32767 (15-bit)
 - all math is modulo 32768; 32758 + 15 => 5
 
-### Binary format
+#### Binary format
 
 - each number is stored as a 16-bit little-endian pair (low byte, high byte)
 - numbers 0..32767 mean a literal value
@@ -29,13 +31,13 @@ your progress.  Good luck!
 - programs are loaded into memory starting at address 0
 - address 0 is the first 16-bit value, address 1 is the second 16-bit value, etc
 
-### Execution
+#### Execution
 
 - After an operation is executed, the next instruction to read is immediately after the last argument of the current operation.
   If a jump was performed, the next operation is instead the exact destination of the jump.
 - Encountering a register as an operation argument should be taken as reading from the register or setting into the register as appropriate.
 
-### Optcodes
+#### Optcodes
 
 | Name | Code | Parameters | Notes |
 |------|------|------------|-------|
@@ -62,7 +64,7 @@ your progress.  Good luck!
 | in   | 20   | a          | read a character from the terminal and write its ascii code to `a`; it can be assumed that once input starts, it will continue until a newline is encountered; this means that you can safely read whole lines from the keyboard and trust that they will be fully read |
 | noop | 21   |            | no operation |
 
-## Running
+### Running
 
 Run Virtual Machine by command:
 
@@ -70,7 +72,7 @@ Run Virtual Machine by command:
 python main.py
 ```
 
-### Parameters
+#### Parameters
 
 - `-l`: load dump file (excepte file name after `-l` option)
 - `-d`: display debug information during running program
@@ -80,3 +82,12 @@ Example:
 ```bash
 python main.py -l save.dump -d
 ```
+
+## Other puzzles notes
+
+After running the virtual machine, we can play in the text advature hidden in the given program. In the game we can find another puzzles:
+
+- [A puzzle for open the door](./puzzles/door_puzzles.ipynb)
+- [A puzzle breaking the teleporter check function](./puzzles/check_code.ipynb)
+- [A puzzle with bypassing the check function invoking](./puzzles/bypassing_the_check.md)
+- [A puzzle with opening the vault lock](./puzzles/vault_lock.ipynb)
