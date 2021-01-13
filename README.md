@@ -86,6 +86,14 @@ Example:
 python main.py -l save.dump -d
 ```
 
+### Decompiling
+
+Run decompile script. The script requires dump file to operate on.
+
+```bash
+python decompile.py -l save.dump
+```
+
 ## Other puzzles notes
 
 After running the virtual machine, we can play in the text advature hidden in the given program. In the game we can find another puzzles:

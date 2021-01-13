@@ -4,7 +4,6 @@ from vm.decompiler import read_program
 from vm.debug_virtual_machine import parameter_to_string, format_parameter
 
 
-
 def out_param(value: int) -> str:
     if value == 10:
         return '\\n'
@@ -32,6 +31,7 @@ else:
     for index, name, paramaters in decompiled_program:
         print('*' if index in call_indexes else ' ', end='')
         print(f'{index:>7}: ', end='')
+
         if name:
             print(f'{name:>7}  ', end='')
             if name == 'out':
@@ -42,4 +42,5 @@ else:
                 print(*map(format_parameter, map(parameter_to_string, paramaters)), end='')
         else:
             print(paramaters, end='')
+
         print()
