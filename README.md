@@ -94,3 +94,4 @@ After running the virtual machine, we can play in the text advature hidden in th
 - [A puzzle breaking the teleporter check function](./puzzles/check_code.ipynb)
 - [A puzzle with bypassing the check function invoking](./puzzles/bypassing_the_check.md)
 - [A puzzle with opening the vault lock](./puzzles/vault_lock.ipynb)
+- [A puzzle with mirror](./puzzles/mirror_puzzle.md)
